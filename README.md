@@ -2,6 +2,8 @@
 
 A tool for profiling [HTTPX](https://github.com/encode/httpx) using cProfile and [SnakeViz](https://jiffyclub.github.io/snakeviz/).
 
+![](assets/example.png)
+
 ## Installation
 
 ```bash
