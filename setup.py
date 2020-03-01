@@ -1,18 +1,10 @@
-from pathlib import Path
-from setuptools import setup
-
-
-def get_packages(package):
-    """
-    Return root package and all sub-packages.
-    """
-    return [str(path.parent) for path in Path(package).glob("**/__init__.py")]
-
+from setuptools import find_packages, setup
 
 setup(
     name="httpxprof",
     version="0.1",
-    packages=get_packages("httpxprof"),
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     install_requires=["click", "httpx", "snakeviz", "uvicorn", "tqdm"],
     entry_points="""
         [console_scripts]
