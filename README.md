@@ -23,25 +23,29 @@ httpxprof run async_client
 httpxprof view async_client
 ```
 
-You can also run your profiling cases by passing Python scripts — useful to profile other HTTP client libraries:
+You can also:
+
+- Run your profiling cases by passing Python scripts — useful to profile other HTTP client libraries.
+- Profile against an HTTPS server using the `--https` option.
 
 ```python
 # aiohttp_single.py
-import asyncio
 import aiohttp
+import ssl
+
 import httpxprof
 
-async def main():
-    async with aiohttp.ClientSession() as session:
-        for _ in httpxprof.requests():
-            async with session.get(httpxprof.url):
-                pass
 
-asyncio.run(main())
+async def main(config: httpxprof.Config) -> None:
+    ssl_context = ssl.create_default_context(cafile=config.client_cert())
+    async with aiohttp.ClientSession() as session:
+        for _ in config.requests():
+            async with session.get(config.url, ssl=ssl_context):
+                pass
 ```
 
 ```bash
-httpxprof run aiohttp_session.py
+httpxprof run --https aiohttp_session.py
 httpxprof view aiohttp_session.py
 ```
 

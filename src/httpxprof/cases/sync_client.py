@@ -3,6 +3,7 @@ import httpx
 import httpxprof
 
 
-with httpx.Client() as client:
-    for _ in httpxprof.requests():
-        client.get(httpxprof.url)
+def main(config: httpxprof.Config) -> None:
+    with httpx.Client(verify=config.client_cert() or False) as client:
+        for _ in config.requests():
+            client.get(config.url)

@@ -1,4 +1,3 @@
-from .config import SERVER_URL as url
-from .config import requests
+from .config import Config
 
-__all__ = ["url", "requests"]
+__all__ = ["Config"]

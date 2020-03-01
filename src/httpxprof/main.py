@@ -1,13 +1,15 @@
-import typing
+import asyncio
+import hashlib
 import os
 import pathlib
 import subprocess
-import hashlib
+import typing
+import inspect
 
 import click
 
-from .config import CASES_DIR, OUTPUT_DIR, SERVER_HOST, SERVER_PORT
-from .utils import server
+from .config import CASES_DIR, OUTPUT_DIR, TMP_DIR, Config
+from .utils import load_case_entrypoint, record_profile
 
 CASES = [
     filename.rstrip(".py")
@@ -70,16 +72,30 @@ def cli() -> None:
 
 @cli.command()
 @click.argument("case", callback=handle_case)
-def run(case: LoadedCase) -> None:
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+@click.option(
+    "--https", is_flag=True, default=False, help="Make requests against an HTTPS server"
+)
+def run(case: LoadedCase, https: bool) -> None:
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    TMP_DIR.mkdir(exist_ok=True)
 
     out = str(OUTPUT_DIR / case.out)
     target = str(case.path)
 
-    args = ["python", "-m", "cProfile", "-o", out, target]
+    config = Config(host="localhost", port=8123, num_requests=1000, https=https)
+    main = load_case_entrypoint(target)
 
-    with server(host=SERVER_HOST, port=SERVER_PORT):
-        subprocess.run(args)
+    with config.server():
+        if inspect.iscoroutinefunction(main):
+
+            async def coro() -> None:
+                with record_profile(out):
+                    await main(config)
+
+            asyncio.run(coro())
+        else:
+            with record_profile(out):
+                main(config)
 
 
 @cli.command()
