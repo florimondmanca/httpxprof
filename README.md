@@ -6,7 +6,8 @@ A tool for profiling [HTTPX](https://github.com/encode/httpx) using cProfile and
 
 ## Installation
 
-Using pip:
+- Install the version of HTTPX you'd like to profile against.
+- Install this tool using pip:
 
 ```bash
 pip install git+https://github.com/florimondmanca/httpxprof
