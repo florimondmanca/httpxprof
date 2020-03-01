@@ -1,15 +1,14 @@
 import asyncio
 
 import httpx
-import tqdm
 
-from httpxprof.config import NUM_REQUESTS, SERVER_URL
+import httpxprof
 
 
 async def main() -> None:
-    for _ in tqdm.tqdm(range(NUM_REQUESTS)):
+    for _ in httpxprof.requests():
         async with httpx.AsyncClient() as client:
-            await client.get(SERVER_URL)
+            await client.get(httpxprof.url)
 
 
 asyncio.run(main())

@@ -1,9 +1,7 @@
 import httpx
-import tqdm
 
-from httpxprof.config import NUM_REQUESTS, SERVER_URL
+import httpxprof
 
-
-for _ in tqdm.tqdm(range(NUM_REQUESTS)):
+for _ in httpxprof.requests():
     with httpx.Client() as client:
-        client.get(SERVER_URL)
+        client.get(httpxprof.url)
