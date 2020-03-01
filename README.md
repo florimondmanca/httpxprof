@@ -16,11 +16,15 @@ pip install git+https://github.com/florimondmanca/httpxprof
 ## Usage
 
 ```bash
-# Run one of the profiling cases:
-httpxprof run async
+# Run one of the built-in profiling cases:
+httpxprof run async_client
 
 # View results:
-httpxprof view async
+httpxprof view async_client
+
+# You can also run your profiling cases by passing Python scripts:
+httpxprof run path/to/my_case.py
+httpxprof view path/to/my_case.py
 ```
 
 You can ask for `--help` on `httpxprof` and any of the subcommands.

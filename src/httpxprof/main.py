@@ -1,5 +1,8 @@
+import typing
 import os
+import pathlib
 import subprocess
+import hashlib
 
 import click
 
@@ -11,6 +14,53 @@ CASES = [
     for filename in os.listdir(CASES_DIR)
     if filename != "__init__.py"
 ]
+FORMATTED_CASES = ", ".join(map(repr, CASES))
+
+
+class LoadedCase(typing.NamedTuple):
+    name: str
+    path: pathlib.Path
+
+    @property
+    def out(self) -> pathlib.Path:
+        return pathlib.Path(f"{self.name}.prof")
+
+
+def name_from_script(path: pathlib.Path) -> str:
+    hsh = hashlib.md5(str(path).encode()).hexdigest()
+    return f"{path.stem}_{hsh}"
+
+
+def handle_case(ctx: click.Context, param: click.Parameter, value: str) -> LoadedCase:
+    if not value:
+        raise click.BadArgumentUsage(
+            f"Expected a case. Choose from {FORMATTED_CASES}, or pass a Python script."
+        )
+
+    if value.endswith(".py"):
+        # Absolute case script.
+        path = pathlib.Path(value)
+
+        if not path.exists():
+            raise click.BadArgumentUsage(
+                f"Path to Python script {value!r} does not exist."
+            )
+
+        name = name_from_script(path)
+
+        return LoadedCase(name=name, path=path)
+
+    # Built-in case.
+    if value not in CASES:
+        raise click.BadArgumentUsage(
+            f"Unknown built-in case: {value!r}. Valid options: {FORMATTED_CASES}"
+        )
+
+    name = value
+    path = CASES_DIR / f"{name}.py"
+    assert path.exists()
+
+    return LoadedCase(name=name, path=path)
 
 
 @click.group()
@@ -19,12 +69,12 @@ def cli() -> None:
 
 
 @cli.command()
-@click.argument("case", type=click.Choice(CASES))
-def run(case: str) -> None:
+@click.argument("case", callback=handle_case)
+def run(case: LoadedCase) -> None:
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    out = str(OUTPUT_DIR / f"{case}.prof")
-    target = str(CASES_DIR / f"{case}.py")
+    out = str(OUTPUT_DIR / case.out)
+    target = str(case.path)
 
     args = ["python", "-m", "cProfile", "-o", out, target]
 
@@ -33,9 +83,9 @@ def run(case: str) -> None:
 
 
 @cli.command()
-@click.argument("case", type=click.Choice(CASES))
-def view(case: str) -> None:
-    args = ["snakeviz", str(OUTPUT_DIR / f"{case}.prof")]
+@click.argument("case", callback=handle_case)
+def view(case: LoadedCase) -> None:
+    args = ["snakeviz", str(OUTPUT_DIR / case.out)]
     subprocess.run(args)
 
 
