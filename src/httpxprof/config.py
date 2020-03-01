@@ -7,5 +7,5 @@ SERVER_URL = f"http://{SERVER_HOST}:{SERVER_PORT}"
 NUM_REQUESTS = 1000
 
 OUTPUT_DIR = pathlib.Path(__file__).parent / "out"
-SCRIPTS_DIR = pathlib.Path(__file__).parent / "scripts"
-assert SCRIPTS_DIR.exists(), SCRIPTS_DIR
+CASES_DIR = pathlib.Path(__file__).parent / "cases"
+assert CASES_DIR.exists(), CASES_DIR

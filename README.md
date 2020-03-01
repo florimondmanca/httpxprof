@@ -15,7 +15,7 @@ pip install git+https://github.com/florimondmanca/httpxprof
 ## Usage
 
 ```bash
-# Run one of the scripts:
+# Run one of the profiling cases:
 httpxprof run async
 
 # View results:
