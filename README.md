@@ -6,8 +6,10 @@ A tool for profiling [HTTPX](https://github.com/encode/httpx) using cProfile and
 
 ## Installation
 
+Using pip:
+
 ```bash
-scripts/install
+pip install git+https://github.com/florimondmanca/httpxprof
 ```
 
 ## Usage
