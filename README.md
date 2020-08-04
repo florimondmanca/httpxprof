@@ -1,6 +1,6 @@
 # httpxprof
 
-A tool for profiling [HTTPX](https://github.com/encode/httpx) using cProfile and [SnakeViz](https://jiffyclub.github.io/snakeviz/).
+A tool for profiling [HTTPX](https://github.com/encode/httpx) using cProfile and [SnakeViz](https://jiffyclub.github.io/snakeviz/). No maintenance intended.
 
 ![](assets/example.png)
 
